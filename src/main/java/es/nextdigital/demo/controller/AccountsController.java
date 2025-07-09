@@ -1,13 +1,15 @@
 package es.nextdigital.demo.controller;
 
-import es.nextdigital.demo.model.MovementsResponse;
+import es.nextdigital.demo.model.response.ExtractMoneyResponse;
+import es.nextdigital.demo.model.response.MovementsResponse;
+import es.nextdigital.demo.model.request.ExtractMoneyRequest;
 import es.nextdigital.demo.service.AccountsService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +28,21 @@ public class AccountsController {
         return (result == null || result.isEmpty())
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(result);
+    }
+
+    @PostMapping(path = "/extract", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<String> extractMoney(@Valid @NotNull @RequestBody ExtractMoneyRequest request) {
+
+        boolean result =  accountsService.extractMoney(request);
+
+        if (!result) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("The money could not be withdrawn. Please try again later.");
+        }
+
+        return ResponseEntity
+                .ok("Extraction successful.");
     }
 
 }

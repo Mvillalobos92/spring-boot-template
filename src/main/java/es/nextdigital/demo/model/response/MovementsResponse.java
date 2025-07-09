@@ -1,4 +1,4 @@
-package es.nextdigital.demo.model;
+package es.nextdigital.demo.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

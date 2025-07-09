@@ -4,7 +4,8 @@ import es.nextdigital.demo.entities.Account;
 import es.nextdigital.demo.entities.Atm;
 import es.nextdigital.demo.entities.Card;
 import es.nextdigital.demo.entities.Movements;
-import es.nextdigital.demo.model.MovementsResponse;
+import es.nextdigital.demo.model.request.ExtractMoneyRequest;
+import es.nextdigital.demo.model.response.MovementsResponse;
 import es.nextdigital.demo.repositories.AccountRepository;
 import es.nextdigital.demo.repositories.AtmRepository;
 import es.nextdigital.demo.repositories.CardRepository;
@@ -48,40 +49,48 @@ public class AccountsService {
                 .map(movement -> modelMapper.map(movement, MovementsResponse.class))
                 .collect(Collectors.toList());
     }
-    public boolean extractMoney(Long cardId, BigDecimal monto, Long atmId) {
-        Card card = cardRepository.findById(cardId)
+
+    public boolean extractMoney(ExtractMoneyRequest request) {
+        Card card = cardRepository.findById(request.getCardId())
                 .orElseThrow(() -> new RuntimeException("Tarjeta no encontrada"));
 
         Account account = card.getAccount();
-        Atm atm = atmRepository.findById(atmId)
+        Atm atm = atmRepository.findById(request.getAtmId())
                 .orElseThrow(() -> new RuntimeException("Cajero no encontrado"));
 
         //suponemos que somos la entidad 1L
         BigDecimal commission = atm.getBankIdentity() == 1L ? BigDecimal.ZERO : atm.getCommission();
-        BigDecimal total = monto.add(commission);
+        BigDecimal total = request.getAmount().add(commission);
 
         if (total.compareTo(card.getLimit()) > 0) {
             return false;
         }
 
-        //DEBITO
         if (card.getCardType() == 1L) {
-            if (account.getBalance().compareTo(total) >= 0) {
-                account.setBalance(account.getBalance().subtract(total));
-                accountRepository.save(account);
-                return true;
-            }
-        } else if (card.getCardType() == 2L) { // Crédito
-            if (card.getCredit().compareTo(total) >= 0) {
-                card.setCredit(card.getCredit().subtract(total));
-                cardRepository.save(card);
-                return true;
-            }
+            return processDebit(account, total);
+        } else if (card.getCardType() == 2L) {
+            return processCredit(card, total);
         }
 
         return false;
     }
 
+    private boolean processDebit(Account account, BigDecimal total) {
+        if (account.getBalance().compareTo(total) >= 0) {
+            account.setBalance(account.getBalance().subtract(total));
+            accountRepository.save(account);
+            return true;
+        }
+        return false;
+    }
 
+    private boolean processCredit(Card card, BigDecimal total) {
+        if (card.getCredit().compareTo(total) >= 0) {
+            card.setCredit(card.getCredit().subtract(total));
+            cardRepository.save(card);
+            return true;
+        }
+        return false;
+    }
 
 }
