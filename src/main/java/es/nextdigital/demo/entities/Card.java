@@ -1,6 +1,7 @@
 package es.nextdigital.demo.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -30,7 +31,10 @@ public class Card {
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
-    @Column(name = "activated")
-    private boolean activated;
+    @Column(name = "active")
+    private boolean active;
+
+    @Column(name = "pin")
+    private String pin;
 
 }

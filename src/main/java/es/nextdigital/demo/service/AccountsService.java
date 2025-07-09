@@ -38,7 +38,8 @@ public class AccountsService {
     private final ModelMapper modelMapper;
 
     public List<MovementsResponse> getAccountTransactions(Long accountId) {
-
+//        Card card = cardRepository.findByAccount_Id(accountId)
+//                .orElseThrow(() -> new CustomException("Card not found."));
         List<Movements> movementsList =
                 movementsRepository.findBySourceAccountOrDestinationAccount(accountId, accountId);
 
@@ -50,6 +51,10 @@ public class AccountsService {
     public boolean extractMoney(ExtractMoneyRequest request) {
         Card card = cardRepository.findById(request.getCardId())
                 .orElseThrow(() -> new CustomException("Card not found."));
+
+        if(!card.isActive()){
+            throw  new CustomException("The card is not activated.");
+        }
 
         Account account = card.getAccount();
         Atm atm = atmRepository.findById(request.getAtmId())
@@ -93,6 +98,10 @@ public class AccountsService {
     public boolean depositMoney(DepositMoneyRequest request) {
         Card card = cardRepository.findById(request.getCardId())
                 .orElseThrow(() -> new CustomException("Card not found."));
+
+        if(!card.isActive()){
+            throw  new CustomException("The card is not activated.");
+        }
 
         Account account = card.getAccount();
         Atm atm = atmRepository.findById(request.getAtmId())

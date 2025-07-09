@@ -1,9 +1,9 @@
 package es.nextdigital.demo.controller;
 
 import es.nextdigital.demo.model.request.DepositMoneyRequest;
+import es.nextdigital.demo.model.request.ExtractMoneyRequest;
 import es.nextdigital.demo.model.request.TransferMoneyRequest;
 import es.nextdigital.demo.model.response.MovementsResponse;
-import es.nextdigital.demo.model.request.ExtractMoneyRequest;
 import es.nextdigital.demo.model.response.OperationResponse;
 import es.nextdigital.demo.service.AccountsService;
 import jakarta.validation.Valid;
@@ -25,7 +25,7 @@ public class AccountsController {
     @GetMapping("/{accountId}/movements")
     public ResponseEntity<List<MovementsResponse>> getAccountMovements(@PathVariable Long accountId) {
 
-        List<MovementsResponse> result =  accountsService.getAccountTransactions(accountId);
+        List<MovementsResponse> result = accountsService.getAccountTransactions(accountId);
 
         return (result == null || result.isEmpty())
                 ? ResponseEntity.noContent().build()
@@ -34,7 +34,7 @@ public class AccountsController {
 
     @PostMapping(path = "/extract", produces = "application/json", consumes = "application/json")
     public ResponseEntity<OperationResponse> extract(@Valid @NotNull @RequestBody ExtractMoneyRequest request) {
-        boolean result =  accountsService.extractMoney(request);
+        boolean result = accountsService.extractMoney(request);
 
         if (!result) {
             return ResponseEntity
@@ -47,12 +47,13 @@ public class AccountsController {
 
     @PostMapping(path = "/deposit", produces = "application/json", consumes = "application/json")
     public ResponseEntity<OperationResponse> deposit(@Valid @NotNull @RequestBody DepositMoneyRequest request) {
-        boolean result =  accountsService.depositMoney(request);
+        boolean result = accountsService.depositMoney(request);
 
         if (Boolean.FALSE.equals(result)) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
-                    .body(new OperationResponse("You are trying to make a deposit from another bank's ATM. Please go to your bank's ATM."));
+                    .body(new OperationResponse(
+                            "You are trying to make a deposit from another bank's ATM. Please go to your bank's ATM."));
         }
         return ResponseEntity
                 .ok(new OperationResponse("Deposit successful."));
@@ -60,7 +61,7 @@ public class AccountsController {
 
     @PostMapping(path = "/transfer", produces = "application/json", consumes = "application/json")
     public ResponseEntity<OperationResponse> transfer(@Valid @NotNull @RequestBody TransferMoneyRequest request) {
-        boolean result =  accountsService.transferMoney(request);
+        boolean result = accountsService.transferMoney(request);
 
         if (Boolean.FALSE.equals(result)) {
             return ResponseEntity
@@ -68,7 +69,7 @@ public class AccountsController {
                     .body(new OperationResponse("There was an error during the transfer. Please try again later."));
         }
         return ResponseEntity
-                .ok(new OperationResponse("Transfer completed."));
+                .ok(new OperationResponse("transfer completed."));
     }
 
 }
