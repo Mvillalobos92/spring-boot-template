@@ -70,7 +70,7 @@ class AccountControllerTest {
         request.setAtmId(2L);
         request.setCardId(3L);
         Mockito.when(accountsService.extractMoney(Mockito.any())).thenReturn(true);
-        ResponseEntity<OperationResponse> response = accountsController.extractMoney(request);
+        ResponseEntity<OperationResponse> response = accountsController.extract(request);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }

@@ -30,4 +30,7 @@ public class Card {
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
+    @Column(name = "activated")
+    private boolean activated;
+
 }

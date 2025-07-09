@@ -32,6 +32,11 @@ public class Account {
     @Column(name = "balance")
     private BigDecimal balance;
 
+    @Column(name = "bank_identity")
+    private Long bankIdentity;
+
+
+
 
 
     //TODO: faltan por añadir mas campos

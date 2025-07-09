@@ -54,7 +54,6 @@ class AccountServiceTest {
         Account account = new Account();
         account.setId(1L);
         Movements movement = new Movements();
-        when(accountRepository.findById(Mockito.any())).thenReturn(Optional.of(account));
         when(movementsRepository.findBySourceAccountOrDestinationAccount(Mockito.any(), Mockito.any())).thenReturn(
                 Arrays.asList(movement));
 
@@ -65,9 +64,8 @@ class AccountServiceTest {
 
     @Test
     void testGetAccountTransactions_accountDoesNotExist() {
-        when(accountRepository.findById(Mockito.any())).thenReturn(Optional.empty());
         List<MovementsResponse> result = accountsService.getAccountTransactions(1L);
-        assertNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -205,7 +203,7 @@ class AccountServiceTest {
             accountsService.depositMoney(request);
         });
 
-        assertEquals("Tarjeta no encontrada", exception.getMessage());
+        assertEquals("Card not found.", exception.getMessage());
     }
 
     @Test
@@ -224,7 +222,7 @@ class AccountServiceTest {
             accountsService.depositMoney(request);
         });
 
-        assertEquals("Cajero no encontrado", exception.getMessage());
+        assertEquals("ATM not found.", exception.getMessage());
     }
 
     @Test
