@@ -1,7 +1,9 @@
 package es.nextdigital.demo.controller;
 
+import es.nextdigital.demo.model.request.DepositMoneyRequest;
 import es.nextdigital.demo.model.request.ExtractMoneyRequest;
 import es.nextdigital.demo.model.response.MovementsResponse;
+import es.nextdigital.demo.model.response.OperationResponse;
 import es.nextdigital.demo.service.AccountsService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,8 +70,32 @@ class AccountControllerTest {
         request.setAtmId(2L);
         request.setCardId(3L);
         Mockito.when(accountsService.extractMoney(Mockito.any())).thenReturn(true);
-        ResponseEntity<String> response = accountsController.extractMoney(request);
+        ResponseEntity<OperationResponse> response = accountsController.extractMoney(request);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
+
+    @Test
+    void deposit_ok() {
+        DepositMoneyRequest request = new DepositMoneyRequest();
+        request.setAmount(new BigDecimal("100.00"));
+        request.setAtmId(2L);
+        request.setCardId(3L);
+        Mockito.when(accountsService.depositMoney(Mockito.any())).thenReturn(true);
+        ResponseEntity<OperationResponse> response = accountsController.deposit(request);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
+
+    @Test
+    void deposit_ko() {
+        DepositMoneyRequest request = new DepositMoneyRequest();
+        request.setAmount(new BigDecimal("100.00"));
+        request.setAtmId(2L);
+        request.setCardId(3L);
+        Mockito.when(accountsService.depositMoney(Mockito.any())).thenReturn(false);
+        ResponseEntity<OperationResponse> response = accountsController.deposit(request);
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertNotNull(response.getBody());
     }
 }

@@ -4,6 +4,7 @@ import es.nextdigital.demo.entities.Account;
 import es.nextdigital.demo.entities.Atm;
 import es.nextdigital.demo.entities.Card;
 import es.nextdigital.demo.entities.Movements;
+import es.nextdigital.demo.model.request.DepositMoneyRequest;
 import es.nextdigital.demo.model.request.ExtractMoneyRequest;
 import es.nextdigital.demo.model.response.MovementsResponse;
 import es.nextdigital.demo.repositories.AccountRepository;
@@ -58,8 +59,8 @@ public class AccountsService {
         Atm atm = atmRepository.findById(request.getAtmId())
                 .orElseThrow(() -> new RuntimeException("Cajero no encontrado"));
 
-        //suponemos que somos la entidad 1L
-        BigDecimal commission = atm.getBankIdentity() == 1L ? BigDecimal.ZERO : atm.getCommission();
+        //suponemos que somos la entidad 1L(Se podría hacer con enumerados y tal)
+        BigDecimal commission = atm.getBankIdentity().equals(1L) ? BigDecimal.ZERO : atm.getCommission();
         BigDecimal total = request.getAmount().add(commission);
 
         if (total.compareTo(card.getLimit()) > 0) {
@@ -93,4 +94,22 @@ public class AccountsService {
         return false;
     }
 
+    public boolean depositMoney(DepositMoneyRequest request) {
+        Card card = cardRepository.findById(request.getCardId())
+                .orElseThrow(() -> new RuntimeException("Tarjeta no encontrada"));
+
+        Account account = card.getAccount();
+        Atm atm = atmRepository.findById(request.getAtmId())
+                .orElseThrow(() -> new RuntimeException("Cajero no encontrado"));
+
+        //suponemos que somos la entidad 1L(Se podría hacer con enumerados y tal)
+        if (!atm.getBankIdentity().equals(1L)) {
+            return false;
+        }
+
+        BigDecimal balance = account.getBalance().add(request.getAmount());
+        account.setBalance(balance);
+        accountRepository.save(account);
+        return true;
+    }
 }
