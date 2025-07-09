@@ -81,6 +81,8 @@ class AccountServiceTest {
         Account account = new Account();
         account.setBalance(BigDecimal.valueOf(150));
         card.setAccount(account);
+        card.setActive(true);
+
 
         Atm atm = new Atm();
         atm.setBankIdentity(1L);
@@ -105,6 +107,8 @@ class AccountServiceTest {
         card.setCardType(2L);
         card.setLimit(BigDecimal.valueOf(200));
         card.setCredit(BigDecimal.valueOf(150));
+        card.setActive(true);
+
 
         Atm atm = new Atm();
         atm.setBankIdentity(1L);
@@ -128,6 +132,7 @@ class AccountServiceTest {
         Card card = new Card();
         card.setCardType(1L);
         card.setLimit(BigDecimal.valueOf(200));
+        card.setActive(true);
         Account account = new Account();
         account.setBalance(BigDecimal.valueOf(500));
         card.setAccount(account);
@@ -153,6 +158,7 @@ class AccountServiceTest {
         Card card = new Card();
         card.setCardType(3L);
         card.setLimit(BigDecimal.valueOf(200));
+        card.setActive(true);
 
         Atm atm = new Atm();
         atm.setBankIdentity(1L);
@@ -177,6 +183,7 @@ class AccountServiceTest {
 
         Card card = new Card();
         card.setAccount(account);
+        card.setActive(true);
 
         Atm atm = new Atm();
         atm.setBankIdentity(1L);
@@ -214,6 +221,8 @@ class AccountServiceTest {
 
         Card card = new Card();
         card.setAccount(new Account());
+        card.setActive(true);
+
 
         when(cardRepository.findById(Mockito.any())).thenReturn(Optional.of(card));
         when(atmRepository.findById(Mockito.any())).thenReturn(Optional.empty());
@@ -237,6 +246,7 @@ class AccountServiceTest {
 
         Card card = new Card();
         card.setAccount(account);
+        card.setActive(true);
 
         Atm atm = new Atm();
         atm.setBankIdentity(2L);

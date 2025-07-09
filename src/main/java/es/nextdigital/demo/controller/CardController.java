@@ -3,6 +3,7 @@ package es.nextdigital.demo.controller;
 import es.nextdigital.demo.model.request.ActivateCardRequest;
 import es.nextdigital.demo.model.request.ChangePinRequest;
 import es.nextdigital.demo.model.request.ModifyCardRequest;
+import es.nextdigital.demo.model.response.CardResponse;
 import es.nextdigital.demo.model.response.OperationResponse;
 import es.nextdigital.demo.service.CardService;
 import jakarta.validation.Valid;
@@ -34,9 +35,9 @@ public class CardController {
     }
 
     @PostMapping("/modify")
-    public ResponseEntity<OperationResponse> modify(@Valid @NotNull @RequestBody ModifyCardRequest request) {
-        cardService.modify(request);
-        return ResponseEntity.ok(new OperationResponse("The PIN has been changed successfully."));
+    public ResponseEntity<CardResponse> modify(@Valid @NotNull @RequestBody ModifyCardRequest request) {
+        CardResponse cardResponse = cardService.modify(request);
+        return ResponseEntity.ok(cardResponse);
     }
 
 
